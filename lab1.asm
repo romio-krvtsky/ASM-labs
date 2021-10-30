@@ -5,8 +5,6 @@
     b dw 8
     c dw 2
     d dw 0
-    error1massage db "error! OVERFLOW",'$'
-    error2massage db "error! DIVISION BY 0", '$'
 .code
 start:  
         mov ax,@data
@@ -16,7 +14,6 @@ start:
         mov cx,ax
         mul cx
         mul cx     ; ax = c^3
-        jc overflowError 
 
         mov bx,a
         mov cx,b
@@ -28,12 +25,10 @@ start:
         mov ax,c
         dec ax    ; ax = c-1
         mov bx,d
-        cmp bx,0
-        je DivideByZeroError
+
         div bx
         mov bx,b
-        cmp bx,0
-        je DivideByZeroError
+    
         div bx
         mov cx,a
         add ax,cx ; ax = (c-1)/d/b + a
@@ -45,7 +40,6 @@ start:
         mov cx,ax
         mul cx
         mul cx    ; ax = a^3
-        jc overflowError
 
         mov bx,ax ; bx = ax = a^3
 
@@ -53,10 +47,8 @@ start:
         mov cx,ax
         mul cx
         mul cx    ; ax = b^3
-        jc overflowError
 
         add ax,bx ; ax = a^3 + b^3
-        jc overflowError
 
         mov cx,c
         mov dx,b
@@ -81,19 +73,6 @@ start:
         mul bx
         mov bx,d
         mul bx  ; ax = a*b*c*d
-        jc overflowError
-        
-overflowError:   
-    mov ah,9
-    lea dx,error1massage
-    int 21h
-    jmp exit
-
-DivideByZeroError:
-    mov ah,9
-    lea dx,error2massage
-    int 21h
-    jmp exit
 
 exit:
         mov ah,4ch
